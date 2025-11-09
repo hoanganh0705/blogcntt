@@ -1,6 +1,6 @@
 // app/posts/[id]/page.tsx
 import { notFound } from 'next/navigation'
-import { PostDetailLayout } from '@/components/PostDetailLayout'
+import { PostDetailLayout } from '@/components/DetailPage/PostDetailLayout'
 
 export const dynamicParams = false // 404 for unknown ids
 
@@ -21,6 +21,7 @@ export default async function PostPage({
   let metadata
 
   try {
+    // mod là do remark-mdx-frontmatter tự tạo ra
     const mod = await import(`@/content/${id}.mdx`)
     console.log(mod)
     PostComponent = mod.default
