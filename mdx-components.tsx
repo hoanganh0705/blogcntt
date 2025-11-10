@@ -12,6 +12,10 @@ export function useMDXComponents(): MDXComponents {
         {children}
       </pre>
     ),
-    code: ({ children }) => <code className='text-gray-100'>{children}</code>
+    h1: ({ children }) => (
+      <h1 className='text-4xl sm:text-5xl md:text-6xl font-bold mt-12 mb-6 text-foreground leading-tight'>
+        {children}
+      </h1>
+    )
   }
 }
