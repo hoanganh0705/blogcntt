@@ -7,6 +7,8 @@ readTime: "8 min read"
 author: "Nguyễn Hoàng Anh"
 image: "/images/curb-cut-effect.jpg"
 ---
+import CodeBlock from '@/components/DetailPage/CodeBlock.tsx';
+
 
 # **Accessibility Is Not an Afterthought**
 
@@ -40,17 +42,35 @@ It’s a **foundational part** of the entire design and development process.
 A truly accessible interface starts with **semantic HTML** — using the right elements for the right purpose.
 
  **Good semantics:**
-```html
+
+<CodeBlock
+  language="html"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`
 <nav>...</nav>
 <main>...</main>
 <article>...</article>
 <button>Click me</button>
-```
+`}
+
+</CodeBlock>
 
  **Bad semantics:**
-```html
+
+<CodeBlock
+  language="html"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`
 <div class="button">Click me</div>
-```
+`}
+
+</CodeBlock>
 
 Why does it matter?
 Because a **screen reader** knows how to announce a `<button>` — it says:
@@ -82,9 +102,20 @@ Never use color as the **only indicator** of meaning.
 
 ❌ Example:
 
-```text
+
+
+<CodeBlock
+  language="text"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`
 This field is required
-```
+
+`}
+
+</CodeBlock>
 
 ✅ Better:
 Add **icons, text, or underline patterns** to reinforce meaning.
@@ -101,9 +132,15 @@ Test your site:
 
 ### **Never do this:**
 
-```css
-outline: none; /* Hides the focus ring */
-```
+<CodeBlock
+  language="tsx"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`outline: none; /* Hides the focus ring */`}
+
+</CodeBlock>
 
 This removes the **visible focus indicator**, which tells users where they are on the page — a major accessibility issue.
 
@@ -111,11 +148,17 @@ This removes the **visible focus indicator**, which tells users where they are o
 
 If you’re using Tailwind CSS:
 
-```tsx
-<button className="focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+<CodeBlock
+  language="tsx"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`<button className="focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
   Click me
-</button>
-```
+</button>`}
+
+</CodeBlock>
 
 This keeps your design clean while maintaining focus visibility.
 
@@ -132,16 +175,22 @@ A visible and properly linked `<label>` tells both sighted users and screen read
 
 ✅ Example:
 
-```jsx
-<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+<CodeBlock
+  language="tsx"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
   Email Address
 </label>
 <input
   id="email"
   type="email"
   className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-/>
-```
+/>`}
+
+</CodeBlock>
 
 Without a `<label>`, a screen reader might just say “Edit text” — leaving the user unsure what the field does.
 
@@ -153,12 +202,21 @@ Errors should be **specific and easy to understand** — not just “Invalid inp
 
 ✅ Example:
 
-```jsx
+<CodeBlock
+  language="tsx"
+  highlight="3-5, 8"
+  collapsible
+  defaultCollapsed={false}
+>
+{`
+
 <p id="email-error" className="mt-1 text-sm text-red-600 flex items-center gap-1">
   <span className="text-xl">❌</span>
   Please enter a valid email (e.g., name@example.com)
 </p>
-```
+`}
+
+</CodeBlock>
 
 Pair errors with icons or color **plus** descriptive text — don’t rely on color alone.
 

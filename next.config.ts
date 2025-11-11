@@ -10,13 +10,7 @@ const withMDX = createMDX({
       ['remark-mdx-frontmatter', { name: 'metadata' }],
     ],
     rehypePlugins: [
-      [
-        'rehype-pretty-code', // ← STRING name
-        {
-          theme: 'one-dark-pro', // Chỉ plain objects
-          keepBackground: true,
-        },
-      ],
+
     ],
   },
 })
