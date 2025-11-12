@@ -13,6 +13,11 @@ export function useMDXComponents(): MDXComponents {
         {children}
       </h2>
     ),
+    h3: ({ children }) => (
+      <h2 className='text-xl md:text-xl font-display font-semibold mt-8 mb-4 text-foreground'>
+        {children}
+      </h2>
+    ),
     p: ({ children }) => (
       <p className='font-sans text-lg leading-relaxed text-shadow-muted-foreground my-5'>
         {children}
