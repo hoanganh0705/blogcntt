@@ -1,13 +1,13 @@
-// components/PostDetailLayout.tsx
 'use client'
 
 import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactNode } from 'react'
+import { AuthorAvatar } from './AuthorAvatar'
 
 export interface Frontmatter {
   title: string
@@ -16,6 +16,7 @@ export interface Frontmatter {
   date: string
   readTime: string
   author: string
+  authorImage: string
   image?: string
 }
 
@@ -30,6 +31,8 @@ export function PostDetailLayout({ metadata, children }: Props) {
     month: 'long',
     day: 'numeric'
   })
+
+  console.log(metadata.image)
 
   return (
     <main className='min-h-screen bg-background'>
@@ -62,9 +65,11 @@ export function PostDetailLayout({ metadata, children }: Props) {
             </h1>
 
             <div className='flex items-center gap-3 pt-4 border-t border-border'>
-              <div className='w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center'>
-                <User size={24} className='text-accent' />
-              </div>
+              <AuthorAvatar
+                name={metadata.author}
+                image={metadata.authorImage}
+              />
+
               <div>
                 <p className='font-medium text-foreground'>{metadata.author}</p>
                 <p className='text-sm text-muted-foreground'>
@@ -89,8 +94,8 @@ export function PostDetailLayout({ metadata, children }: Props) {
 
           {/* Excerpt */}
           <Card className='mb-8 bg-muted/50 border-accent/20'>
-            <CardContent className='pt-6'>
-              <p className='text-lg text-foreground italic'>
+            <CardContent className=''>
+              <p className='text-base text-foreground italic'>
                 {metadata.excerpt}
               </p>
             </CardContent>
@@ -100,26 +105,6 @@ export function PostDetailLayout({ metadata, children }: Props) {
           <div className='prose prose-invert max-w-none mb-12 prose-headings:text-5xl prose-headings:font-bold prose-headings:mt-12 prose-headings:mb-6'>
             {children}
           </div>
-
-          {/* Share card */}
-          <Card className='bg-muted/50 border-border'>
-            <CardHeader>
-              <h3 className='text-lg font-semibold text-foreground'>
-                Share this article
-              </h3>
-            </CardHeader>
-            <CardContent className='flex gap-4'>
-              <Button variant='outline' size='sm'>
-                Twitter
-              </Button>
-              <Button variant='outline' size='sm'>
-                LinkedIn
-              </Button>
-              <Button variant='outline' size='sm'>
-                Copy Link
-              </Button>
-            </CardContent>
-          </Card>
         </article>
       </div>
     </main>
