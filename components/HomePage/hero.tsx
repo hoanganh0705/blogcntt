@@ -1,3 +1,5 @@
+import { Button } from '../ui/button'
+
 export function Hero() {
   return (
     <section className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32'>
@@ -11,12 +13,12 @@ export function Hero() {
           discoveries from building digital experiences.
         </p>
         <div className='flex flex-col sm:flex-row gap-4 pt-4'>
-          <button className='px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium'>
+          <Button className='px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium'>
             Read Latest
-          </button>
-          <button className='px-6 py-3 border border-border text-foreground rounded-lg hover:bg-secondary transition-colors font-medium'>
+          </Button>
+          <Button className='px-6 py-3 border border-border bg-transparent hover:bg-white/80 text-foreground rounded-lg transition-colors font-medium'>
             Browse All
-          </button>
+          </Button>
         </div>
       </div>
     </section>

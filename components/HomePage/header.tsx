@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import { Button } from '../ui/button'
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,19 +35,17 @@ export function Header() {
           >
             About
           </Link>
-          <button className='px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity'>
-            Subscribe
-          </button>
         </div>
 
         {/* Mobile Menu Button */}
-        <button
+        <Button
+          variant='ghost'
           className='md:hidden'
           onClick={() => setIsOpen(!isOpen)}
           aria-label='Toggle menu'
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        </Button>
 
         {/* Mobile Navigation */}
         {isOpen && (
@@ -70,9 +69,6 @@ export function Header() {
               >
                 About
               </Link>
-              <button className='w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity'>
-                Subscribe
-              </button>
             </div>
           </div>
         )}
