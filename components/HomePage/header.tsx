@@ -17,22 +17,13 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <div className='hidden md:flex items-center gap-8'>
-          <Link
-            href='#'
-            className='text-foreground hover:text-accent transition-colors'
-          >
+          <Link href='#' className='text-foreground'>
             Articles
           </Link>
-          <Link
-            href='#'
-            className='text-foreground hover:text-accent transition-colors'
-          >
+          <Link href='#' className='text-foreground'>
             Categories
           </Link>
-          <Link
-            href='#'
-            className='text-foreground hover:text-accent transition-colors'
-          >
+          <Link href='#' className='text-foreground'>
             About
           </Link>
         </div>
