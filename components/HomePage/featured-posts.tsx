@@ -1,36 +1,22 @@
+// components/FeaturedPosts.tsx
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { getFeaturedPosts, PostMetadata } from '@/lib/getPosts'
 
-const featuredPosts = [
-  {
-    id: 1,
-    title: 'Building Accessible Interfaces',
-    excerpt:
-      'How to create digital experiences that work for everyone, with practical techniques and real-world examples.',
-    category: 'Design',
-    date: 'Oct 20, 2024',
-    readTime: '8 min read'
-  },
-  {
-    id: 2,
-    title: 'React Performance Optimization',
-    excerpt:
-      'Deep dive into rendering optimization, memoization strategies, and profiling tools to make your apps faster.',
-    category: 'Development',
-    date: 'Oct 18, 2024',
-    readTime: '12 min read'
-  }
-]
+export async function FeaturedPosts() {
+  const posts: PostMetadata[] = await getFeaturedPosts(2)
 
-export function FeaturedPosts() {
+  if (posts.length === 0) return null
+
   return (
     <section className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
       <h2 className='text-3xl font-bold text-foreground mb-12'>
         Featured Articles
       </h2>
       <div className='grid md:grid-cols-2 gap-8'>
-        {featuredPosts.map((post) => (
-          <article key={post.id} className='group cursor-pointer'>
-            <div className='bg-card border border-border rounded-lg p-8 hover:border-accent transition-colors h-full flex flex-col justify-between'>
+        {posts.map((post) => (
+          <Link href={`/blog/${post.slug}`} key={post.slug} className='group'>
+            <article className='bg-card border border-border rounded-lg p-8 hover:border-accent transition-colors h-full flex flex-col justify-between'>
               <div>
                 <div className='flex items-center gap-3 mb-4'>
                   <span className='text-sm font-medium text-accent'>
@@ -38,7 +24,11 @@ export function FeaturedPosts() {
                   </span>
                   <span className='text-sm text-muted-foreground'>•</span>
                   <span className='text-sm text-muted-foreground'>
-                    {post.date}
+                    {new Date(post.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
                   </span>
                 </div>
                 <h3 className='text-2xl font-bold text-foreground mb-3 group-hover:text-accent transition-colors'>
@@ -57,8 +47,8 @@ export function FeaturedPosts() {
                   className='text-accent group-hover:translate-x-1 transition-transform'
                 />
               </div>
-            </div>
-          </article>
+            </article>
+          </Link>
         ))}
       </div>
     </section>

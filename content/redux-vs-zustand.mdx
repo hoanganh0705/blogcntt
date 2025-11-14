@@ -6,6 +6,7 @@ date: "2025-11-14"
 readTime: "10 min read"
 author: "Sophia Rodriguez"
 authorImage: "/images/author.jpeg"
+featured: true
 image: "/images/zustand-redux.jpg"
 ---
 import CodeBlock from '@/components/DetailPage/CodeBlock.tsx';
@@ -119,15 +120,14 @@ Let’s dive into **code, patterns, and trade-offs**.
   defaultCollapsed={false}
 >
 {`import { createSlice, configureStore } from '@reduxjs/toolkit';
-
-const counterSlice = createSlice({
-  name: 'counter',
-  initialState: { count: 0 },
-  reducers: {
-    increment: (state) => { state.count += 1; },
-    decrement: (state) => { state.count -= 1; },
-  },
-});
+  const counterSlice = createSlice({
+    name: 'counter',
+    initialState: { count: 0 },
+    reducers: {
+      increment: (state) => { state.count += 1; },
+      decrement: (state) => { state.count -= 1; },
+    },
+  });
 
 const store = configureStore({
   reducer: { counter: counterSlice.reducer },

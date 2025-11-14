@@ -2,8 +2,8 @@ import { Button } from '../ui/button'
 
 export function Hero() {
   return (
-    <section className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32'>
-      <div className='space-y-6'>
+    <section className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
+      <div className=''>
         <h1 className='text-4xl md:text-6xl font-bold text-foreground text-balance leading-tight'>
           Thoughts on design, development, and the web
         </h1>
