@@ -1,9 +1,11 @@
 // lib/getPosts.ts
+'use server' // ← Thêm dòng này ở đầu file
+
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-const postsDirectory = path.join(process.cwd(), 'app/blog')
+const postsDirectory = path.join(process.cwd(), 'content')
 
 export interface PostMetadata {
   slug: string
@@ -12,15 +14,16 @@ export interface PostMetadata {
   category: string
   date: string
   readTime: string
-  author: string
-  authorImage: string
   featured?: boolean
-  image?: string
 }
 
 export async function getAllPosts(): Promise<PostMetadata[]> {
-  const files = fs.readdirSync(postsDirectory)
+  if (!fs.existsSync(postsDirectory)) {
+    console.warn('Blog directory not found:', postsDirectory)
+    return []
+  }
 
+  const files = fs.readdirSync(postsDirectory)
   const posts = files
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => {
@@ -36,10 +39,7 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
         category: data.category || 'General',
         date: data.date || '1970-01-01',
         readTime: data.readTime || '5 min read',
-        author: data.author || 'Unknown',
-        authorImage: data.authorImage || '',
-        featured: data.featured === true,
-        image: data.image
+        featured: data.featured === true
       }
     })
 
@@ -51,7 +51,6 @@ export async function getAllPosts(): Promise<PostMetadata[]> {
 export async function getFeaturedPosts(limit = 2): Promise<PostMetadata[]> {
   const allPosts = await getAllPosts()
   const featured = allPosts.filter((post) => post.featured)
-
   return featured.length > 0
     ? featured.slice(0, limit)
     : allPosts.slice(0, limit)

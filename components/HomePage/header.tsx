@@ -16,7 +16,7 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className='hidden md:flex items-center gap-8'>
+        <div className='hidden md:flex items-center gap-8 text-sm'>
           <Link href='#' className='text-foreground'>
             Articles
           </Link>
