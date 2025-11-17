@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { Button } from '../ui/button'
+import { ModeToggle } from '../theme-toggle'
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,15 +29,17 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <Button
-          variant='ghost'
-          className='md:hidden'
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label='Toggle menu'
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </Button>
+        <div className='flex items-center gap-2 md:gap-4'>
+          <ModeToggle />
+          <Button
+            variant='ghost'
+            className='md:hidden'
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label='Toggle menu'
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </Button>
+        </div>
 
         {/* Mobile Navigation */}
         {isOpen && (
