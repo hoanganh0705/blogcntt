@@ -1,21 +1,84 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState, useEffect, useMemo, useRef, useDeferredValue } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, Copy, ChevronDown, ChevronUp } from 'lucide-react'
-import Prism from 'prismjs'
-import 'prismjs/themes/prism.css'
-import 'prismjs/components/prism-bash'
-import 'prismjs/components/prism-python'
-import 'prismjs/components/prism-css'
-import 'prismjs/components/prism-markup'
-import 'prismjs/components/prism-jsx'
-import 'prismjs/components/prism-tsx'
-import prettier from 'prettier'
-import parserTypeScript from 'prettier/parser-typescript'
-import parserBabel from 'prettier/parser-babel'
-import parserHtml from 'prettier/parser-html'
-import parserPostcss from 'prettier/parser-postcss'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+
+// Custom theme giống hệt bản cũ
+const lightTheme = {
+  'code[class*="language-"]': {
+    color: '#1e1e1e',
+    background: 'white',
+    fontFamily:
+      'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+    fontSize: '0.875rem',
+    lineHeight: '1.5'
+  },
+  'pre[class*="language-"]': {
+    color: '#1e1e1e',
+    background: 'white',
+    margin: 0,
+    padding: 0
+  },
+  comment: { color: '#6b7280', fontStyle: 'italic' },
+  punctuation: { color: '#6b7280' },
+  property: { color: '#e11d48' },
+  tag: { color: '#e11d48' },
+  boolean: { color: '#e11d48' },
+  number: { color: '#e11d48' },
+  selector: { color: '#16a34a' },
+  'attr-name': { color: '#16a34a' },
+  string: { color: '#16a34a' },
+  char: { color: '#16a34a' },
+  builtin: { color: '#16a34a' },
+  operator: { color: '#2563eb' },
+  entity: { color: '#2563eb' },
+  url: { color: '#2563eb' },
+  atrule: { color: '#7c3aed' },
+  'attr-value': { color: '#7c3aed' },
+  keyword: { color: '#7c3aed' },
+  function: { color: '#d97706' },
+  'class-name': { color: '#d97706' },
+  regex: { color: '#ea580c' },
+  important: { color: '#ea580c' },
+  variable: { color: '#ea580c' }
+}
+
+const darkTheme = {
+  ...lightTheme,
+  'code[class*="language-"]': {
+    ...lightTheme['code[class*="language-"]'],
+    color: '#e5e7eb',
+    background: '#1e1e1e'
+  },
+  'pre[class*="language-"]': {
+    ...lightTheme['pre[class*="language-"]'],
+    color: '#e5e7eb',
+    background: '#1e1e1e'
+  },
+  comment: { color: '#6b7280', fontStyle: 'italic' },
+  punctuation: { color: '#9ca3af' },
+  property: { color: '#f87171' },
+  tag: { color: '#f87171' },
+  boolean: { color: '#f87171' },
+  number: { color: '#f87171' },
+  selector: { color: '#34d399' },
+  'attr-name': { color: '#34d399' },
+  string: { color: '#34d399' },
+  char: { color: '#34d399' },
+  builtin: { color: '#34d399' },
+  operator: { color: '#93c5fd' },
+  entity: { color: '#93c5fd' },
+  url: { color: '#93c5fd' },
+  atrule: { color: '#c084fc' },
+  'attr-value': { color: '#c084fc' },
+  keyword: { color: '#c084fc' },
+  function: { color: '#fbbf24' },
+  'class-name': { color: '#fbbf24' },
+  regex: { color: '#fb923c' },
+  important: { color: '#fb923c' },
+  variable: { color: '#fb923c' }
+}
 
 interface CodeBlockProps {
   language?: string
@@ -28,7 +91,7 @@ interface CodeBlockProps {
 
 export default function CodeBlock({
   children,
-  language: propLanguage = 'typescript',
+  language: propLanguage = 'text',
   showLineNumbers = true,
   highlight,
   collapsible = false,
@@ -36,203 +99,156 @@ export default function CodeBlock({
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false)
   const [collapsed, setCollapsed] = useState(defaultCollapsed)
-  const [formattedCode, setFormattedCode] = useState('')
-  const deferredCode = useDeferredValue(formattedCode)
-  const preRef = useRef<HTMLPreElement>(null)
-
-  const language = useMemo(() => {
-    if (propLanguage) return propLanguage
-    const trimmed = children.trim()
-    if (trimmed.startsWith('<')) return 'tsx'
-    if (trimmed.startsWith('{') || trimmed.startsWith('[')) return 'json'
-    if (trimmed.includes('=>') || trimmed.includes('function'))
-      return 'javascript'
-    return 'typescript'
-  }, [children, propLanguage])
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
-    const formatCode = async () => {
-      try {
-        const parserMap: Record<string, any> = {
-          json: 'json',
-          javascript: 'babel',
-          jsx: 'babel',
-          typescript: 'typescript',
-          tsx: 'typescript',
-          html: 'html',
-          css: 'postcss',
-          bash: 'babel',
-          python: 'babel'
-        }
-
-        const parser = parserMap[language] || 'typescript'
-        const plugins: any[] = []
-        if (['typescript', 'tsx'].includes(language))
-          plugins.push(parserTypeScript)
-        if (['javascript', 'jsx', 'bash', 'python'].includes(language))
-          plugins.push(parserBabel)
-        if (language === 'html') plugins.push(parserHtml)
-        if (language === 'css') plugins.push(parserPostcss)
-
-        const formatted = await prettier.format(children, {
-          parser,
-          plugins,
-          semi: true,
-          trailingComma: 'es5',
-          singleQuote: true,
-          printWidth: 80
-        })
-        setFormattedCode(formatted)
-      } catch (error) {
-        console.error('Prettier error:', error)
-        setFormattedCode(children)
-      }
+    const updateTheme = () => {
+      const isDark =
+        document.documentElement.classList.contains('dark') ||
+        document.documentElement.dataset.theme === 'dark'
+      setTheme(isDark ? 'dark' : 'light')
     }
-    formatCode()
-  }, [children, language])
+    updateTheme()
+    const observer = new MutationObserver(updateTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme']
+    })
+    return () => observer.disconnect()
+  }, [])
 
-  const highlightedCode = useMemo(() => {
-    if (!deferredCode) return ''
-    const prismLang = Prism.languages[language] || Prism.languages.javascript
-    return Prism.highlight(deferredCode, prismLang, language)
-  }, [deferredCode, language])
+  const codeString = children.trim()
 
-  const highlightLines = useMemo(() => {
-    if (!highlight) return new Set<number>()
-    const set = new Set<number>()
+  const highlightLines = new Set<number>()
+  if (highlight) {
     highlight.split(',').forEach((part) => {
       const trimmed = part.trim()
       if (trimmed.includes('-')) {
         const [start, end] = trimmed.split('-').map(Number)
-        for (let i = start; i <= end; i++) set.add(i)
+        for (let i = start; i <= end; i++) highlightLines.add(i)
       } else {
-        set.add(Number(trimmed))
+        highlightLines.add(Number(trimmed))
       }
     })
-    return set
-  }, [highlight])
-
-  const codeLines = useMemo(() => deferredCode.split('\n'), [deferredCode])
+  }
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(deferredCode)
+    await navigator.clipboard.writeText(codeString)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleCopyLine = async (line: string, index: number) => {
-    await navigator.clipboard.writeText(line)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
-    const lineEl = preRef.current?.querySelector(`[data-line="${index}"]`)
-    lineEl?.classList.add('copied-line')
-    setTimeout(() => lineEl?.classList.remove('copied-line'), 1000)
-  }
-
-  const toggleCollapse = () => setCollapsed((prev) => !prev)
-
   return (
-    <div className='relative rounded-lg border border-gray-300 overflow-hidden font-mono text-sm bg-white'>
+    <div className='relative rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden font-mono text-sm my-4 bg-white dark:bg-gray-900'>
       {/* Header */}
-      <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-300 bg-white'>
+      <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900'>
         <div className='flex items-center gap-3'>
-          <span className='text-xs font-semibold uppercase text-gray-600'>
-            {language}
+          <span className='text-xs font-semibold uppercase text-gray-600 dark:text-gray-400'>
+            {propLanguage}
           </span>
           {collapsible && (
             <button
-              onClick={toggleCollapse}
-              className='p-1 rounded hover:bg-gray-100 transition-colors text-gray-600'
-              aria-label={collapsed ? 'Expand' : 'Collapse'}
+              onClick={() => setCollapsed(!collapsed)}
+              className='p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-400'
             >
               {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
           )}
         </div>
-
         <button
           onClick={handleCopy}
           className={`p-1.5 rounded transition-colors ${
             copied
-              ? 'text-green-600'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              ? 'text-green-600 dark:text-green-400'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800'
           }`}
-          aria-label='Copy code'
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
         </button>
       </div>
 
-      {/* Body */}
-      <div
-        className={`overflow-x-auto ${collapsed ? 'max-h-0 overflow-hidden' : ''}`}
-      >
-        <div className='flex'>
-          {showLineNumbers && (
-            <div className='px-3 py-4 select-none border-r border-gray-300 bg-white text-gray-500'>
-              {codeLines.map((_, i) => (
-                <div
-                  key={i}
-                  className='text-right leading-6 pr-2 cursor-pointer hover:text-blue-600 transition-colors'
-                  onClick={() => handleCopyLine(codeLines[i], i)}
-                  title='Click to copy line'
-                >
-                  {i + 1}
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Code */}
+      <div className={`flex ${collapsed ? 'max-h-0 overflow-hidden' : ''}`}>
+        {showLineNumbers && (
+          <div className='px-3 py-4 select-none border-r border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-500'>
+            {codeString.split('\n').map((_, i) => (
+              <div
+                key={i}
+                className='text-right leading-6 pr-2 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
+                onClick={() => {
+                  const line = codeString.split('\n')[i]
+                  navigator.clipboard.writeText(line)
+                  const el = document.querySelector(`[data-line="${i}"]`)
+                  el?.classList.add('copied-line')
+                  setTimeout(() => el?.classList.remove('copied-line'), 1000)
+                }}
+                title='Click to copy line'
+              >
+                {i + 1}
+              </div>
+            ))}
+          </div>
+        )}
 
-          <pre
-            ref={preRef}
-            className='m-0 p-4 flex-1 overflow-x-auto leading-6'
-          >
-            <code
-              className={`language-${language}`}
-              dangerouslySetInnerHTML={{
-                __html: highlightedCode
-                  .split('\n')
-                  .map((line, i) => {
-                    const isHighlighted = highlightLines.has(i + 1)
-                    return `<span class="line ${isHighlighted ? 'highlight-line' : ''}" data-line="${i}">${line || '&nbsp;'}</span>`
-                  })
-                  .join('\n')
-              }}
-            />
-          </pre>
-        </div>
+        <SyntaxHighlighter
+          language={propLanguage}
+          style={theme === 'dark' ? darkTheme : lightTheme}
+          showLineNumbers={false}
+          wrapLines
+          lineProps={(lineNumber) => {
+            const isHighlighted = highlightLines.has(lineNumber)
+            return {
+              'data-line': lineNumber - 1,
+              style: {
+                display: 'block',
+                width: '100%',
+                backgroundColor: isHighlighted
+                  ? theme === 'dark'
+                    ? 'rgba(251, 191, 36, 0.3)'
+                    : 'rgba(255, 237, 0, 0.2)'
+                  : 'transparent',
+                paddingLeft: '1rem',
+                marginLeft: '-1rem',
+                borderLeft: isHighlighted
+                  ? `3px solid ${theme === 'dark' ? '#f59e0b' : '#facc15'}`
+                  : 'none'
+              }
+            }
+          }}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            background: 'transparent',
+            fontSize: '0.875rem'
+          }}
+        >
+          {codeString}
+        </SyntaxHighlighter>
       </div>
 
-      {/* ÉP MẠNH MÀU NỀN TRẮNG */}
+      {/* Custom styles */}
       <style jsx>{`
         pre {
-          background: white !important;
-          color: #1e1e1e !important;
-        }
-        .highlight-line {
-          background-color: rgba(255, 237, 0, 0.2);
-          display: block;
-          margin: 0 -1rem;
-          padding: 0 1rem;
-          border-left: 3px solid #facc15;
-        }
-        .copied-line {
-          background-color: rgba(34, 197, 94, 0.15) !important;
-          transition: background-color 0.3s;
-        }
-        pre {
-          scrollbar-width: thin;
-          scrollbar-color: #ccc white;
+          scrollbar-width: thin !important;
+          scrollbar-color: ${theme === 'dark'
+            ? '#4b5563 #1e1e1e'
+            : '#ccc white'} !important;
         }
         pre::-webkit-scrollbar {
           height: 8px;
         }
         pre::-webkit-scrollbar-track {
-          background: white;
+          background: ${theme === 'dark' ? '#1e1e1e' : 'white'};
         }
         pre::-webkit-scrollbar-thumb {
-          background: #ccc;
+          background: ${theme === 'dark' ? '#4b5563' : '#ccc'};
           border-radius: 4px;
+        }
+        .copied-line {
+          background-color: ${theme === 'dark'
+            ? 'rgba(34, 197, 94, 0.3)'
+            : 'rgba(34, 197, 94, 0.15)'} !important;
+          transition: background-color 0.3s;
         }
       `}</style>
     </div>
