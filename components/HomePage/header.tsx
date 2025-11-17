@@ -27,10 +27,10 @@ export function Header() {
           <Link href='#' className='text-foreground'>
             About
           </Link>
+          <ModeToggle />
         </div>
 
-        <div className='flex items-center gap-2 md:gap-4'>
-          <ModeToggle />
+        <div className='flex items-center gap-2 md:gap-4 md:hidden'>
           <Button
             variant='ghost'
             className='md:hidden'
