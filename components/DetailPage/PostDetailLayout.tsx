@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -31,8 +31,6 @@ export function PostDetailLayout({ metadata, children }: Props) {
     month: 'long',
     day: 'numeric'
   })
-
-  console.log(metadata.image)
 
   return (
     <main className='min-h-screen bg-background'>
