@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Allow all content
+Allow: /blog/
+Allow: /
+
+# Disallow admin areas (if you add them later)
+Disallow: /admin/
+Disallow: /api/private/
+
+# Sitemap
+Sitemap: http://localhost:3000/sitemap.xml
