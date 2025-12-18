@@ -5,9 +5,12 @@ import { PostDetailLayout } from '@/components/DetailPage/PostDetailLayout'
 export const dynamicParams = false // 404 for unknown ids
 
 export async function generateStaticParams() {
-  // OPTIONAL: pre-render known posts at build time
-  // Return [] if you want fully dynamic (SSR) rendering
-  return []
+  const { getAllPosts } = await import('@/lib/getPosts')
+  const posts = await getAllPosts()
+
+  return posts.map((post) => ({
+    id: post.slug
+  }))
 }
 
 export default async function PostPage({
@@ -23,11 +26,8 @@ export default async function PostPage({
   try {
     // mod là do remark-mdx-frontmatter tự tạo ra
     const mod = await import(`@/content/${id}.mdx`)
-    console.log(mod)
     PostComponent = mod.default
-    console.log(PostComponent)
     metadata = mod.metadata
-    console.log(metadata)
   } catch {
     notFound()
   }

@@ -19,7 +19,6 @@ export interface PostMetadata {
 
 export async function getAllPosts(): Promise<PostMetadata[]> {
   if (!fs.existsSync(postsDirectory)) {
-    console.warn('Blog directory not found:', postsDirectory)
     return []
   }
 
