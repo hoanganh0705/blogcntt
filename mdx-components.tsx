@@ -4,19 +4,19 @@ import type { MDXComponents } from 'mdx/types'
 export function useMDXComponents(): MDXComponents {
   return {
     h1: ({ children }) => (
-      <h1 className='text-3xl md:text-3xl font-display font-bold mt-16 mb-8 text-foreground leading-tight'>
+      <h1 className='text-3xl font-display font-bold mt-16 mb-8 text-foreground leading-tight'>
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className='text-2xl md:text-2xl font-display font-semibold mt-12 mb-6 text-foreground'>
+      <h2 className='text-2xl font-display font-semibold mt-12 mb-6 text-foreground'>
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h2 className='text-xl md:text-xl font-display font-semibold mt-8 mb-4 text-foreground'>
+      <h3 className='text-xl font-display font-semibold mt-8 mb-4 text-foreground'>
         {children}
-      </h2>
+      </h3>
     ),
     p: ({ children }) => (
       <p className='font-sans text-lg leading-relaxed text-shadow-muted-foreground my-5'>
